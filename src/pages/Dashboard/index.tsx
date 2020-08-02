@@ -1,7 +1,7 @@
 import React, { useState,FormEvent } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
 
-import { Title, Form, Repositories } from './styles';
+import { Title, Form, Repositories, Error } from './styles';
 import logo from '../../assets/logo.svg';
 import api from '../../services/api';
 
@@ -12,35 +12,45 @@ interface Repos {
      * that is returned from the API. Use only the infos
      * that are mandatory.
     */
-   full_name:string;
-   description:string;
-   owner:{
-       login:string;
-       avatar_url:string;
+    full_name:string;
+    description:string;
+    owner:{
+        login:string;
+        avatar_url:string;
    };
 }
 
 const Dashboard: React.FC = () => {
     const [repos, setRepos] = useState<Repos[]>([]);
     const [newRepo, setNewRepo] = useState('');
+    const [inputError,setInputError] = useState('');
 
     async function handleAddRepo(event:FormEvent<HTMLFormElement>):Promise<void> {
-        console.log(newRepo);
         event.preventDefault();
 
-        const response = await api.get<Repos>(`repos/${newRepo}`);
+        if(!newRepo) {
+            setInputError('Insira autor/nome do repositório.');
+            return;
+        }
 
-        const repository = response.data;
+        try {
+            const response = await api.get<Repos>(`repos/${newRepo}`);
+            const repository = response.data;
 
-        setRepos([...repos,repository]);
-        setNewRepo('');
+            setRepos([...repos,repository]);
+            setNewRepo('');
+            setInputError('');
+
+        } catch(err) {
+            setInputError('Insira um repositório válido!')
+        }
     }
 
     return (
     <>
         <img src={logo} alt="GitHub Explorer Logo" />
         <Title>Explore repositórios no GitHub</Title>
-            <Form onSubmit={handleAddRepo}>
+            <Form hasError={!!inputError} onSubmit={handleAddRepo}>
                 <input
                     value={newRepo}
                     onChange={ (e) => setNewRepo(e.target.value) }
@@ -49,6 +59,7 @@ const Dashboard: React.FC = () => {
                 />
                 <button type="submit">Pequisar</button>
             </Form>
+            {inputError && <Error>{inputError}</Error>}
         <Repositories>
 
             {repos.map(repo => (
