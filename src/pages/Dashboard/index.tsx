@@ -1,34 +1,72 @@
-import React from 'react';
+import React, { useState,FormEvent } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
 
 import { Title, Form, Repositories } from './styles';
 import logo from '../../assets/logo.svg';
+import api from '../../services/api';
+
+
+interface Repos {
+    /*
+     * It is not mandatory to use on the interface all
+     * that is returned from the API. Use only the infos
+     * that are mandatory.
+    */
+   full_name:string;
+   description:string;
+   owner:{
+       login:string;
+       avatar_url:string;
+   };
+}
 
 const Dashboard: React.FC = () => {
+    const [repos, setRepos] = useState<Repos[]>([]);
+    const [newRepo, setNewRepo] = useState('');
+
+    async function handleAddRepo(event:FormEvent<HTMLFormElement>):Promise<void> {
+        console.log(newRepo);
+        event.preventDefault();
+
+        const response = await api.get<Repos>(`repos/${newRepo}`);
+
+        const repository = response.data;
+
+        setRepos([...repos,repository]);
+        setNewRepo('');
+    }
+
     return (
-      <>
-          <img src={logo} alt="GitHub Explorer Logo" />
-          <Title>Explore repositórios no GitHub</Title>
-          <Form action="">
-          <input placeholder="Digite o repostório" type="text" />
-          <button type="submit">Pequisar</button>
-        </Form>
+    <>
+        <img src={logo} alt="GitHub Explorer Logo" />
+        <Title>Explore repositórios no GitHub</Title>
+            <Form onSubmit={handleAddRepo}>
+                <input
+                    value={newRepo}
+                    onChange={ (e) => setNewRepo(e.target.value) }
+                    placeholder="Digite o repostório"
+                    type="text"
+                />
+                <button type="submit">Pequisar</button>
+            </Form>
+        <Repositories>
 
-            <Repositories>
-                <a href="teste">
-                <img
-                        src="https://avatars1.githubusercontent.com/u/15476059?s=400&u=03269b24a681e8d63ef8ae1b56a2143032ba3625&v=4"
-                    alt="Gustavo Plensack"
-                  />
-                <div>
-                      <strong>gustavoplensack/repo</strong>
-                        <p>Descrição repo</p>
+            {repos.map(repo => (
+                <a key={repo.full_name} href="teste">
+                    <img
+                        src={repo.owner.avatar_url}
+                        alt={repo.owner.login}
+                    />
+                    <div>
+                        <strong>{repo.full_name}</strong>
+                        <p>{repo.description}</p>
                     </div>
+                        <FiChevronRight size={20} />
+                </a>
+            ))}
 
-                    <FiChevronRight size={20} />
-              </a>
         </Repositories>
-        </>
+    </>
     );
 };
 
