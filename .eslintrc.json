@@ -47,7 +47,8 @@
             "tsx": "never"
             }
         ],
-        "prettier/prettier": "error"
+        "prettier/prettier": "error",
+        "react/jsx-ident":"off"
     },
     "settings": {
       "import/resolver": {
