@@ -11,7 +11,7 @@ interface Repos {
     /*
      * It is not mandatory to use on the interface all
      * that is returned from the API. Use only the infos
-     * that are mandatory.
+     * that are necessary.
     */
     full_name:string;
     description:string;
