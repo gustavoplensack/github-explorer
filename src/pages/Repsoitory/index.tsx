@@ -1,8 +1,8 @@
 import React from 'react';
 import {useRouteMatch, Link} from 'react-router-dom';
-import {FiChevronLeft} from 'react-icons/fi'
+import {FiChevronLeft, FiChevronRight} from 'react-icons/fi'
 
-import {Header,RepositoryInfo} from './styles';
+import {Header,RepositoryInfo, Issues} from './styles';
 
 import logoImg from '../../assets/logo.svg';
 
@@ -47,6 +47,16 @@ return (
                 </li>
             </ul>
         </RepositoryInfo>
+
+        <Issues>
+           <Link to={'hsakhskhs'}>
+                <div>
+                    <strong>Issue Name</strong>
+                    <p>issue description</p>
+                </div>
+                <FiChevronRight size={20} />
+            </Link>
+        </Issues>
     </>
 );
 };
