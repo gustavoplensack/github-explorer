@@ -9,6 +9,10 @@ export const Title = styled.h1`
     margin-top: 80px;
 `;
 
+export const Logo = styled.img`
+    margin-top: 12px;
+`;
+
 interface FormProps {
     hasError:boolean;
 }
